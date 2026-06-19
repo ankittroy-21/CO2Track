@@ -4,7 +4,7 @@ import { useGroqInsights } from '../hooks/useGroqInsights'
 import { useAIUsage } from '../hooks/useAIUsage'
 import InsightCard from '../components/InsightCard'
 import { formatCO2 } from '../utils/formatters'
-import { Sparkles, Send, RefreshCw, AlertCircle } from 'lucide-react'
+import { Sparkles, Send, RefreshCw, AlertCircle, ChevronDown } from 'lucide-react'
 
 const DID_YOU_KNOW = {
   transport: [
@@ -58,6 +58,19 @@ export default function Insights() {
   const chatEndRef = useRef(null)
   const chatInputRef = useRef(null)
 
+  const [expandedReportId, setExpandedReportId] = useState(null)
+  const prevHistoryLengthRef = useRef(0)
+
+  // Expand the newest report when history loads or a new one is added
+  useEffect(() => {
+    if (insightsHistory.length > 0) {
+      if (insightsHistory.length > prevHistoryLengthRef.current) {
+        setExpandedReportId(insightsHistory[0].id)
+      }
+      prevHistoryLengthRef.current = insightsHistory.length
+    }
+  }, [insightsHistory])
+
   // Scroll to bottom of chat on new message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -86,6 +99,7 @@ export default function Insights() {
   const handleGetInsights = async () => {
     if (!canUse) return
     await incrementUsage()
+    setExpandedReportId('generating') // collapse others while generating new ones
     generateInsights(emissionData)
   }
 
@@ -266,20 +280,51 @@ export default function Insights() {
 
             {/* History of AI Insights */}
             {insightsHistory.length > 0 ? (
-              <div className="space-y-6">
+              <div className="space-y-3">
                 {insightsHistory.map((report, rIdx) => {
+                  const isExpanded = expandedReportId === report.id
                   const parsed = parseInsights(report.content)
                   return (
-                    <div key={report.id || rIdx} className="space-y-3">
-                      <div className="flex items-center justify-between text-xs text-gray-400 border-b border-gray-100 pb-1.5">
-                        <span className="font-medium text-charcoal">Report generated</span>
-                        <span>{formatDateTime(report.created_at)}</span>
-                      </div>
-                      <div className="space-y-3">
-                        {parsed.map((insight, i) => (
-                          <InsightCard key={`${report.id || rIdx}-${i}`} insight={insight} index={i} />
-                        ))}
-                      </div>
+                    <div
+                      key={report.id || rIdx}
+                      className="border border-gray-200 rounded-lg overflow-hidden transition-all duration-200 shadow-sm"
+                    >
+                      {/* Accordion Trigger Header */}
+                      <button
+                        type="button"
+                        onClick={() => setExpandedReportId(isExpanded ? null : report.id)}
+                        className={`w-full flex items-center justify-between px-4 py-3 text-left text-xs font-semibold transition-colors focus:outline-none ${
+                          isExpanded
+                            ? 'bg-green-light/20 text-green-dark border-b border-gray-200'
+                            : 'bg-white text-charcoal hover:bg-gray-50'
+                        }`}
+                        aria-expanded={isExpanded}
+                        aria-controls={`report-content-${report.id}`}
+                      >
+                        <span className="flex items-center gap-1.5">
+                          <span className="font-medium text-gray-500">Report generated</span>
+                          <span>{formatDateTime(report.created_at)}</span>
+                        </span>
+                        <ChevronDown
+                          className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
+                            isExpanded ? 'transform rotate-180 text-green-dark' : ''
+                          }`}
+                        />
+                      </button>
+
+                      {/* Accordion Content Panel */}
+                      {isExpanded && (
+                        <div
+                          id={`report-content-${report.id}`}
+                          className="p-4 bg-white space-y-3"
+                        >
+                          <div className="space-y-3">
+                            {parsed.map((insight, i) => (
+                              <InsightCard key={`${report.id || rIdx}-${i}`} insight={insight} index={i} />
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )
                 })}
