@@ -24,7 +24,7 @@ export default function Login() {
       if (provider === 'github') {
         await signInWithGitHub()
       }
-    } catch (err) {
+    } catch {
       setError('Sign-in failed. Please try again.')
       setLoadingProvider(null)
     }

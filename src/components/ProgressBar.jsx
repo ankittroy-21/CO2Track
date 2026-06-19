@@ -1,6 +1,18 @@
 import { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 
-export default function ProgressBar({ value, max = 100, color = '#2d6a4f', height = 8, showLabel = false }) {
+/**
+ * Animated Progress Bar Component
+ * 
+ * @param {Object} props
+ * @param {number} props.value - Current progress value
+ * @param {number} [props.max=100] - Maximum possible value
+ * @param {string} [props.color='#2d6a4f'] - Fill color
+ * @param {number} [props.height=8] - Height of the progress bar in px (unused but kept for API compat)
+ * @param {boolean} [props.showLabel=false] - Whether to show the text label
+ * @returns {JSX.Element}
+ */
+export default function ProgressBar({ value, max = 100, color = '#2d6a4f', showLabel = false }) {
   const [displayValue, setDisplayValue] = useState(0)
 
   useEffect(() => {
@@ -45,4 +57,11 @@ export default function ProgressBar({ value, max = 100, color = '#2d6a4f', heigh
       </div>
     </div>
   )
+}
+
+ProgressBar.propTypes = {
+  value: PropTypes.number.isRequired,
+  max: PropTypes.number,
+  color: PropTypes.string,
+  showLabel: PropTypes.bool,
 }

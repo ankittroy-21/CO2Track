@@ -10,7 +10,12 @@ const NAV_ITEMS = [
   { to: '/profile',     label: 'My Profile',   icon: User                    },
 ]
 
-/** CO2Track wordmark with subscript 2 */
+/**
+ * CO2Track wordmark with subscript 2
+ * @param {Object} props
+ * @param {string} [props.size='md'] - 'sm' | 'md'
+ * @returns {JSX.Element}
+ */
 function Wordmark({ size = 'md' }) {
   const textSize = size === 'sm' ? 'text-base' : 'text-lg'
   return (
@@ -20,7 +25,12 @@ function Wordmark({ size = 'md' }) {
   )
 }
 
-/** Logo icon (leaf in green square) */
+/**
+ * Logo icon (leaf in green square)
+ * @param {Object} props
+ * @param {number} [props.size=24] - width and height in px
+ * @returns {JSX.Element}
+ */
 function LogoIcon({ size = 24 }) {
   return (
     <div
@@ -33,6 +43,10 @@ function LogoIcon({ size = 24 }) {
   )
 }
 
+/**
+ * Main application layout with responsive sidebar/bottom nav
+ * @returns {JSX.Element}
+ */
 export default function Layout() {
   const { profile, signOut } = useAuth()
   const navigate = useNavigate()

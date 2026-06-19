@@ -31,3 +31,6 @@ dist-ssr
 
 # Hackathon prompt files
 Prompt.md
+
+# Testing coverage reports
+coverage/

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEmissions } from '../hooks/useEmissions'
 import { useAuth } from '../contexts/AuthContext'
 import { Check } from 'lucide-react'
+import { sanitize } from '../utils/sanitize'
 
 const STEPS = { PERSONAL: 1, TRANSPORT: 2, ENERGY: 3 }
 
@@ -73,7 +74,7 @@ export default function Onboarding() {
     } else if (user?.user_metadata?.name && !formData.name) {
       setFormData(prev => ({ ...prev, name: user.user_metadata.name }))
     }
-  }, [profile, user])
+  }, [profile, user, formData.name])
 
   const update = (key, value) => {
     setFormData((prev) => ({ ...prev, [key]: value }))
@@ -84,7 +85,7 @@ export default function Onboarding() {
     const newErrors = {}
 
     if (step === STEPS.PERSONAL) {
-      if (!formData.name.trim()) newErrors.name = 'Please enter your name'
+      if (!sanitize.name(formData.name)) newErrors.name = 'Please enter your name'
       if (!formData.location) newErrors.location = 'Please select your location'
     }
 
@@ -124,7 +125,7 @@ export default function Onboarding() {
 
   const handleComplete = async () => {
     const profileUpdates = {
-      name: formData.name.trim(),
+      name: sanitize.name(formData.name),
       location: formData.location,
       transport: formData.transport,
       weekly_km: Number.parseFloat(formData.weeklyKm),

@@ -4,6 +4,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { storage } from '../utils/storage'
 
 const API_URL = 'https://api.groq.com/openai/v1/chat/completions'
 const MODEL = 'llama-3.1-8b-instant'
@@ -46,20 +47,16 @@ export function useGroqInsights() {
       if (!error && data) {
         setInsightsHistory(data)
         // Cache in local storage
-        localStorage.setItem(`co2track_ai_insights_${user.id}`, JSON.stringify(data))
+        storage.setItem(`co2track_ai_insights_${user.id}`, data)
       } else {
         // Fallback to local storage
-        const localData = localStorage.getItem(`co2track_ai_insights_${user.id}`)
-        if (localData) {
-          setInsightsHistory(JSON.parse(localData))
-        }
+        const localData = storage.getItem(`co2track_ai_insights_${user.id}`, [])
+        setInsightsHistory(localData)
       }
     } catch {
       // Fallback on exception
-      const localData = localStorage.getItem(`co2track_ai_insights_${user.id}`)
-      if (localData) {
-        setInsightsHistory(JSON.parse(localData))
-      }
+      const localData = storage.getItem(`co2track_ai_insights_${user.id}`, [])
+      setInsightsHistory(localData)
     } finally {
       setIsHistoryLoading(false)
     }
@@ -89,26 +86,23 @@ export function useGroqInsights() {
       if (!error && data) {
         setInsightsHistory(prev => [data, ...prev])
         // Sync local storage
-        const currentLocal = localStorage.getItem(`co2track_ai_insights_${user.id}`)
-        const parsedLocal = currentLocal ? JSON.parse(currentLocal) : []
-        localStorage.setItem(`co2track_ai_insights_${user.id}`, JSON.stringify([data, ...parsedLocal]))
+        const parsedLocal = storage.getItem(`co2track_ai_insights_${user.id}`, [])
+        storage.setItem(`co2track_ai_insights_${user.id}`, [data, ...parsedLocal])
         return data
       } else {
         // Fallback to local storage (generate mock id)
         const mockRow = { ...newInsightRow, id: Math.random().toString(36).substr(2, 9) }
         setInsightsHistory(prev => [mockRow, ...prev])
-        const currentLocal = localStorage.getItem(`co2track_ai_insights_${user.id}`)
-        const parsedLocal = currentLocal ? JSON.parse(currentLocal) : []
-        localStorage.setItem(`co2track_ai_insights_${user.id}`, JSON.stringify([mockRow, ...parsedLocal]))
+        const parsedLocal = storage.getItem(`co2track_ai_insights_${user.id}`, [])
+        storage.setItem(`co2track_ai_insights_${user.id}`, [mockRow, ...parsedLocal])
         return mockRow
       }
     } catch {
       // Fallback to local storage
       const mockRow = { ...newInsightRow, id: Math.random().toString(36).substr(2, 9) }
       setInsightsHistory(prev => [mockRow, ...prev])
-      const currentLocal = localStorage.getItem(`co2track_ai_insights_${user.id}`)
-      const parsedLocal = currentLocal ? JSON.parse(currentLocal) : []
-      localStorage.setItem(`co2track_ai_insights_${user.id}`, JSON.stringify([mockRow, ...parsedLocal]))
+      const parsedLocal = storage.getItem(`co2track_ai_insights_${user.id}`, [])
+      storage.setItem(`co2track_ai_insights_${user.id}`, [mockRow, ...parsedLocal])
       return mockRow
     }
   }, [user])
@@ -210,7 +204,7 @@ Give specific, ranked, actionable advice based on THIS user's actual biggest emi
     } finally {
       setIsLoading(false)
     }
-  }, [user, saveInsight])
+  }, [saveInsight])
 
   // ── Chat with Groq using conversation history ───────────
   const chat = useCallback(async (userMessage, history, emissionData) => {

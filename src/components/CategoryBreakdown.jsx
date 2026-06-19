@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import PropTypes from 'prop-types'
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { formatCO2 } from '../utils/formatters'
 
 const COLORS = {
@@ -17,7 +18,13 @@ const CATEGORY_LABELS = {
 }
 
 /**
- * @param {{ breakdown: Object }} props
+ * Category Breakdown Component
+ * Displays a visual breakdown of emissions by category (Transport, Food, Energy, Shopping)
+ * using Recharts donut and bar charts.
+ * 
+ * @param {Object} props
+ * @param {Object} props.breakdown - Breakdown of emissions by category
+ * @returns {JSX.Element}
  */
 export default function CategoryBreakdown({ breakdown }) {
   const pieData = useMemo(() =>
@@ -53,6 +60,14 @@ export default function CategoryBreakdown({ breakdown }) {
       )
     }
     return null
+  }
+
+  CustomTooltip.propTypes = {
+    active: PropTypes.bool,
+    payload: PropTypes.arrayOf(PropTypes.shape({
+      payload: PropTypes.object,
+      value: PropTypes.number
+    }))
   }
 
   if (pieData.length === 0) {
@@ -130,4 +145,15 @@ export default function CategoryBreakdown({ breakdown }) {
       </div>
     </div>
   )
+}
+
+CategoryBreakdown.propTypes = {
+  breakdown: PropTypes.shape({
+    transport: PropTypes.number,
+    food: PropTypes.number,
+    energy: PropTypes.number,
+    shopping: PropTypes.number,
+    total: PropTypes.number,
+    percentages: PropTypes.objectOf(PropTypes.string),
+  }).isRequired,
 }

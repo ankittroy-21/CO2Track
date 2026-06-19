@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react'
+import PropTypes from 'prop-types'
 import { formatCO2 } from '../utils/formatters'
 
 const DIFFICULTY_STYLES = {
@@ -17,7 +18,14 @@ const DIFFICULTY_STYLES = {
 }
 
 /**
- * @param {{ challenge: Object, onAccept: Function, onComplete: Function }} props
+ * Challenge Card Component
+ * Displays a single eco-challenge with difficulty, potential savings, points, and actions.
+ * 
+ * @param {Object} props
+ * @param {Object} props.challenge - The challenge details
+ * @param {Function} [props.onAccept] - Handler for accepting the challenge
+ * @param {Function} [props.onComplete] - Handler for completing the challenge
+ * @returns {JSX.Element}
  */
 export default function ChallengeCard({ challenge, onAccept, onComplete }) {
   const styles = DIFFICULTY_STYLES[challenge.difficulty] || DIFFICULTY_STYLES.easy
@@ -77,4 +85,19 @@ export default function ChallengeCard({ challenge, onAccept, onComplete }) {
       )}
     </article>
   )
+}
+
+ChallengeCard.propTypes = {
+  challenge: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    difficulty: PropTypes.oneOf(['easy', 'medium', 'hard']).isRequired,
+    saving: PropTypes.number.isRequired,
+    points: PropTypes.number.isRequired,
+    isAccepted: PropTypes.bool,
+    isCompleted: PropTypes.bool,
+  }).isRequired,
+  onAccept: PropTypes.func,
+  onComplete: PropTypes.func,
 }

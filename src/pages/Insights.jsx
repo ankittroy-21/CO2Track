@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useEmissions } from '../hooks/useEmissions'
 import { useGroqInsights } from '../hooks/useGroqInsights'
 import { useAIUsage } from '../hooks/useAIUsage'
+import { sanitize } from '../utils/sanitize'
 import InsightCard from '../components/InsightCard'
 import { formatCO2 } from '../utils/formatters'
 import { Sparkles, Send, RefreshCw, AlertCircle, ChevronDown } from 'lucide-react'
@@ -51,7 +52,7 @@ function formatDateTime(dateString) {
 export default function Insights() {
   const { totalMonthlyEmission, categoryBreakdown, userProfile } = useEmissions()
   const { insights, insightsHistory, isLoading, error, generateInsights, chat, retry } = useGroqInsights()
-  const { count, remaining, canUse, incrementUsage, loading: usageLoading } = useAIUsage()
+  const { remaining, canUse, incrementUsage, loading: usageLoading } = useAIUsage()
   const [messageHistory, setMessageHistory] = useState([])
   const [chatInput, setChatInput] = useState('')
   const [isChatLoading, setIsChatLoading] = useState(false)
@@ -104,7 +105,7 @@ export default function Insights() {
   }
 
   const handleSendChat = async () => {
-    const text = chatInput.trim()
+    const text = sanitize.text(chatInput)
     if (!text || isChatLoading) return
 
     const userMsg = { id: Date.now(), text, sender: 'user', timestamp: new Date().toISOString() }
@@ -398,7 +399,7 @@ export default function Insights() {
               <button
                 type="button"
                 onClick={handleSendChat}
-                disabled={!chatInput.trim() || isChatLoading}
+                disabled={!sanitize.text(chatInput) || isChatLoading}
                 aria-label="Send message"
                 className="bg-green-dark text-white px-3 py-2 rounded-lg hover:bg-green-med transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-dark disabled:opacity-50 disabled:cursor-not-allowed"
               >

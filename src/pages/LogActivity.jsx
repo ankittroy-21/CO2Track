@@ -34,7 +34,7 @@ function getSubcategoryLabel2(category, sub) {
 }
 
 export default function LogActivity() {
-  const { logs, addLog, totalMonthlyEmission } = useEmissions()
+  const { logs, addLog } = useEmissions()
   const [activeTab, setActiveTab] = useState('transport')
   const [form, setForm] = useState({
     subcategory: '',

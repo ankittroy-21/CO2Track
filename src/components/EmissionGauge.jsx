@@ -1,11 +1,18 @@
 import { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 import { formatCO2 } from '../utils/formatters'
 
 const MAX_SCALE = 600 // kg, represents 100% of arc
 
 /**
+ * Emission Gauge Component
  * Animated circular gauge for total CO₂ emissions
- * @param {{ totalKg: number, status: string, isLoading: boolean }} props
+ * 
+ * @param {Object} props
+ * @param {number} props.totalKg - Total CO2 in kg
+ * @param {string} [props.status] - User's status relative to global average ('below' or 'above')
+ * @param {boolean} [props.isLoading] - Loading state
+ * @returns {JSX.Element}
  */
 export default function EmissionGauge({ totalKg, status = 'below', isLoading = false }) {
   const [displayValue, setDisplayValue] = useState(0)
@@ -81,4 +88,10 @@ export default function EmissionGauge({ totalKg, status = 'below', isLoading = f
       </div>
     </div>
   )
+}
+
+EmissionGauge.propTypes = {
+  totalKg: PropTypes.number.isRequired,
+  status: PropTypes.oneOf(['below', 'above', 'equal']),
+  isLoading: PropTypes.bool,
 }

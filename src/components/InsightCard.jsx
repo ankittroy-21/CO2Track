@@ -1,8 +1,14 @@
-import { TrendingDown, TrendingUp, Lightbulb } from 'lucide-react'
+import { TrendingDown, Lightbulb } from 'lucide-react'
+import PropTypes from 'prop-types'
 
 /**
+ * Insight Card Component
  * Displays a single AI-generated insight
- * @param {{ insight: string, index: number }} props
+ * 
+ * @param {Object} props
+ * @param {string} props.insight - The insight text
+ * @param {number} props.index - The index of this insight
+ * @returns {JSX.Element}
  */
 export default function InsightCard({ insight, index }) {
   const isPositive = !insight.toLowerCase().includes('reduce') &&
@@ -36,4 +42,9 @@ export default function InsightCard({ insight, index }) {
       </div>
     </article>
   )
+}
+
+InsightCard.propTypes = {
+  insight: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
 }

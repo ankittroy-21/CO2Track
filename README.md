@@ -154,13 +154,27 @@ Open **http://localhost:5173** to view the app!
 
 ---
 
-## 7. Commands & Testing
+## 7. Development, Quality & Testing
 
+### Code Quality Rules
+The project enforces strict code quality and linting standards using ESLint:
+- **Zero Errors or Warnings:** The codebase compiles with no warnings/errors under ESLint rules.
+- **Strict Lint Config:** Rules ensure no unused variables, no undefined variables, and compliant React Hooks dependency arrays.
+- **Centralized Utils:** Standardized logger (`logger.js`), local storage access (`storage.js`), and user input sanitization (`sanitize.js`).
+- **JSDoc & PropTypes:** All utilities, hooks, and React components are comprehensively decorated with JSDoc annotations and enforced via `PropTypes`.
+
+### Run Commands & Tests
 ```bash
+# Run ESLint validation
+npx eslint src/
+
 # Run unit tests
 npm test
 
-# Run build compilation
+# Run unit tests with coverage metrics (>80% target for utils and hooks)
+npm run test:coverage
+
+# Compile production build
 npm run build
 
 # Start preview server for production build

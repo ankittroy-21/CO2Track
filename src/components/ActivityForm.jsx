@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { calculateEmission, getSubcategories, getSubcategoryLabel, getTransportModeLabel, getDietLabel, getEnergySourceLabel } from '../utils/emissionFactors'
+import PropTypes from 'prop-types'
+import { calculateEmission, getSubcategories, getSubcategoryLabel } from '../utils/emissionFactors'
 
 const CATEGORIES = {
   transport: 'Transport',
@@ -8,6 +9,16 @@ const CATEGORIES = {
   shopping: 'Shopping',
 }
 
+/**
+ * Activity Form Component
+ * Form to log or edit a user activity for carbon footprint tracking
+ * 
+ * @param {Object} props
+ * @param {Function} props.onSubmit - Called when the form is successfully submitted
+ * @param {Object} [props.initialData] - Initial form data for editing an existing activity
+ * @param {Function} [props.onCancel] - Called when the cancel button is clicked
+ * @returns {JSX.Element}
+ */
 export default function ActivityForm({ onSubmit, initialData = null, onCancel }) {
   const [formData, setFormData] = useState({
     category: '',
@@ -40,21 +51,11 @@ export default function ActivityForm({ onSubmit, initialData = null, onCancel })
     } else {
       setAvailableSubcategories([])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.category])
 
   const getLabel = (category, subcategory) => {
-    switch (category) {
-      case 'transport':
-        return getTransportModeLabel(subcategory)
-      case 'food':
-        return getDietLabel(subcategory)
-      case 'energy':
-        return getEnergySourceLabel(subcategory)
-      case 'shopping':
-        return getSubcategoryLabel(category, subcategory)
-      default:
-        return getSubcategoryLabel(category, subcategory)
-    }
+    return getSubcategoryLabel(category, subcategory)
   }
 
   const validateForm = () => {
@@ -195,4 +196,15 @@ export default function ActivityForm({ onSubmit, initialData = null, onCancel })
       </div>
     </form>
   )
+}
+
+ActivityForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  initialData: PropTypes.shape({
+    category: PropTypes.string,
+    subcategory: PropTypes.string,
+    quantity: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    date: PropTypes.string,
+  }),
+  onCancel: PropTypes.func,
 }

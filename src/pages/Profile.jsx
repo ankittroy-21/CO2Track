@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { Check, AlertCircle } from 'lucide-react'
+import { sanitize } from '../utils/sanitize'
 
 const TRANSPORT_MODES = {
   car_petrol: 'Car (Petrol)',
@@ -82,7 +83,7 @@ export default function Profile() {
 
   const validate = () => {
     const newErrors = {}
-    if (!formData.name.trim()) newErrors.name = 'Please enter your name'
+    if (!sanitize.name(formData.name)) newErrors.name = 'Please enter your name'
     if (!formData.location) newErrors.location = 'Please select your location'
     if (!formData.transport) newErrors.transport = 'Please select your transport'
     if (!formData.weeklyKm || Number.parseFloat(formData.weeklyKm) < 0)
@@ -104,7 +105,7 @@ export default function Profile() {
 
     setSaveStatus('saving')
     const updates = {
-      name: formData.name.trim(),
+      name: sanitize.name(formData.name),
       location: formData.location,
       transport: formData.transport,
       weekly_km: Number.parseFloat(formData.weeklyKm),
