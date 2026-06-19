@@ -163,7 +163,7 @@ export default function Challenges() {
         <p className="text-sm text-gray-500 mt-0.5">Accept challenges and earn points for eco-friendly actions</p>
       </div>
 
-      <div className="flex flex-col gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Progress */}
         <div className="space-y-4">
           {/* Points card */}
@@ -220,7 +220,7 @@ export default function Challenges() {
         </div>
 
         {/* Right: Challenge cards */}
-        <div>
+        <div className="lg:col-span-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {WEEKLY_CHALLENGES.map((challenge) => {
               const isCompleted = completedChallenges.some((c) => c.id === challenge.id)

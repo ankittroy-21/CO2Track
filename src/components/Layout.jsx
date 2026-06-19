@@ -7,7 +7,7 @@ const NAV_ITEMS = [
   { to: '/log-activity',label: 'Log Activity', icon: PlusCircle              },
   { to: '/insights',    label: 'AI Insights',  icon: Sparkles                },
   { to: '/challenges',  label: 'Challenges',   icon: Trophy                  },
-  { to: '/onboarding',  label: 'My Profile',   icon: User                    },
+  { to: '/profile',     label: 'My Profile',   icon: User                    },
 ]
 
 /** CO2Track wordmark with subscript 2 */
@@ -78,15 +78,19 @@ export default function Layout() {
         {/* User + Sign out */}
         {profile && (
           <div className="border-t border-gray-100 p-3">
-            <div className="flex items-center gap-2.5 px-2 py-2 mb-1">
+            <button
+              onClick={() => navigate('/profile')}
+              className="flex items-center gap-2.5 px-2 py-2 mb-1 w-full rounded-lg hover:bg-gray-50 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-dark"
+              aria-label="View profile settings"
+            >
               <div className="h-7 w-7 rounded-full bg-green-light border border-green-med flex items-center justify-center flex-shrink-0 text-xs font-semibold text-green-dark">
                 {profile.name?.charAt(0)?.toUpperCase() ?? '?'}
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="text-xs font-medium text-charcoal truncate">{profile.name}</div>
                 <div className="text-[10px] text-gray-400 truncate">{profile.location === 'india' ? '🇮🇳 India' : '🌍 Global'}</div>
               </div>
-            </div>
+            </button>
             <button
               onClick={handleSignOut}
               className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
@@ -113,15 +117,19 @@ export default function Layout() {
               <Wordmark size="sm" />
             </button>
             {profile && (
-              <div className="h-7 w-7 rounded-full bg-green-light border border-green-med flex items-center justify-center text-xs font-semibold text-green-dark">
+              <button
+                onClick={() => navigate('/profile')}
+                className="h-7 w-7 rounded-full bg-green-light border border-green-med flex items-center justify-center text-xs font-semibold text-green-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-green-dark hover:opacity-85 transition-opacity"
+                aria-label="View profile settings"
+              >
                 {profile.name?.charAt(0)?.toUpperCase() ?? '?'}
-              </div>
+              </button>
             )}
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 w-full max-w-2xl mx-auto px-4 py-6 pb-24 sm:pb-8 sm:px-6">
+        <main className="flex-1 w-full max-w-6xl mx-auto px-4 py-6 pb-24 sm:pb-8 sm:px-6">
           <Outlet />
         </main>
 

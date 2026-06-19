@@ -7,6 +7,7 @@ import LogActivity from './pages/LogActivity'
 import Insights from './pages/Insights'
 import Challenges from './pages/Challenges'
 import Onboarding from './pages/Onboarding'
+import Profile from './pages/Profile'
 
 /** Full-screen loading spinner */
 function LoadingScreen() {
@@ -66,6 +67,7 @@ function AppRoutes() {
           <Route path="log-activity" element={<LogActivity />} />
           <Route path="insights" element={<Insights />} />
           <Route path="challenges" element={<Challenges />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Route>
 
