@@ -84,9 +84,9 @@ CO₂Track utilizes Google and GitHub OAuth for authentication.
 1. In the Supabase Dashboard, navigate to **Authentication** -> **Providers**.
 2. **Configure Google:**
    - Enable the Google provider.
-   - Obtain a Client ID and Client Secret from the [Google Cloud Console Credentials Page](https://console.cloud.google.com/apis/credentials).
+   - Obtain a Client ID and Client Secret from the [Google API Console Credentials Page](https://console.developers.google.com/apis/credentials).
    - Enter them in the Supabase Google configuration.
-   - Set the Redirect URI in Google Cloud Console to the redirect URL provided by Supabase.
+   - Set the Authorized Redirect URI in the Google API Console to the redirect URL provided by Supabase.
 3. **Configure GitHub:**
    - Enable the GitHub provider.
    - Register a new OAuth application on [GitHub Developer Settings](https://github.com/settings/developers).
