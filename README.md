@@ -74,7 +74,7 @@ npm install
 ### Step 2: Set Up the Supabase Database
 1. Go to your **Supabase Dashboard** and create a **New Project**.
 2. Go to **SQL Editor** -> **New Query**.
-3. Copy the contents of [`supabase/schema.sql`](file:///c:/My%20repos/Ecotrack/ecotrack/supabase/schema.sql) and paste them into the SQL Editor.
+3. Copy the contents of `supabase/schema.sql` paste them into the SQL Editor.
 4. Click **Run** to create the tables, indexes, triggers, and Row-Level Security (RLS) policies.
 
 *Note: The script includes a trigger `on_auth_user_created` that automatically inserts a corresponding profile row whenever a new user signs up via OAuth.*
