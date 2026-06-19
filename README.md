@@ -32,7 +32,7 @@ All calculations use **IPCC AR6 and EPA emission factors**:
 | Shopping | Carbon Trust Product Footprinting | kg CO₂ per item |
 
 ### AI Personalization & Rate Limiting
-CO₂Track uses **Groq's llama-3.3-70b-versatile** model to deliver custom action plans:
+CO₂Track uses **Groq's llama-3.1-8b-instant** model to deliver custom action plans:
 1. Injects the user's actual emission breakdown (transport, food, energy, shopping).
 2. Compares their total monthly footprint to India's national average (230 kg) and the global average (391.67 kg).
 3. Forces the model to address their **highest-impact category first**.
@@ -154,7 +154,7 @@ Open **http://localhost:5173** to view the app!
 | **Supabase** | 2 | Secure authentication, PostgreSQL relational database, and real-time operations. |
 | **Tailwind CSS** | 3 | Utility-first styling with customized color palette design tokens. |
 | **Recharts** | 3 | Responsive, interactive charts for dashboard metrics. |
-| **Groq API** | Llama 3.3 | Fast AI inference for personalized insights. |
+| **Groq API** | Llama 3.1 8B | Fast, lightweight AI inference for personalized insights (optimized for free-tier rate limits). |
 | **Jest** | 30 | Standard unit testing runner. |
 
 ---

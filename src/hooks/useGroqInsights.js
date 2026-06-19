@@ -4,7 +4,7 @@
 import { useState, useCallback, useRef } from 'react'
 
 const API_URL = 'https://api.groq.com/openai/v1/chat/completions'
-const MODEL = 'llama-3.3-70b-versatile'
+const MODEL = 'llama-3.1-8b-instant'
 
 /**
  * @typedef {Object} EmissionData
