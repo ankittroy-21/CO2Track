@@ -1,6 +1,6 @@
 /**
  * AuthContext — wraps the app with Supabase session state
- * Provides: user, session, profile, signInWithGoogle, signInWithGitHub, signOut, loading
+ * Provides: user, session, profile, signInWithGitHub, signOut, loading
  */
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
@@ -42,12 +42,6 @@ export function AuthProvider({ children }) {
     return () => subscription.unsubscribe()
   }, [fetchProfile])
 
-  const signInWithGoogle = useCallback(() =>
-    supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/` },
-    }), [])
-
   const signInWithGitHub = useCallback(() =>
     supabase.auth.signInWithOAuth({
       provider: 'github',
@@ -78,7 +72,6 @@ export function AuthProvider({ children }) {
       user,
       profile,
       loading,
-      signInWithGoogle,
       signInWithGitHub,
       signOut,
       updateProfile,

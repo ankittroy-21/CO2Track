@@ -80,19 +80,14 @@ npm install
 *Note: The script includes a trigger `on_auth_user_created` that automatically inserts a corresponding profile row whenever a new user signs up via OAuth.*
 
 ### Step 3: Set Up Authentication (OAuth Providers)
-CO₂Track utilizes Google and GitHub OAuth for authentication.
+CO₂Track utilizes GitHub OAuth for authentication.
 1. In the Supabase Dashboard, navigate to **Authentication** -> **Providers**.
-2. **Configure Google:**
-   - Enable the Google provider.
-   - Obtain a Client ID and Client Secret from the [Google API Console Credentials Page](https://console.developers.google.com/apis/credentials).
-   - Enter them in the Supabase Google configuration.
-   - Set the Authorized Redirect URI in the Google API Console to the redirect URL provided by Supabase.
-3. **Configure GitHub:**
+2. **Configure GitHub:**
    - Enable the GitHub provider.
    - Register a new OAuth application on [GitHub Developer Settings](https://github.com/settings/developers).
    - Copy the Client ID and Client Secret into the Supabase GitHub configuration.
    - Set the Homepage URL to `http://localhost:5173` and the Authorization callback URL to the Redirect URI provided by Supabase.
-4. In Supabase **Authentication** -> **URL Configuration**, set the site URL to `http://localhost:5173/` (for local development).
+3. In Supabase **Authentication** -> **URL Configuration**, set the site URL to `http://localhost:5173/` (for local development).
 
 ### Step 4: Configure Environment Variables
 1. Copy the `.env.example` file to `.env`:
