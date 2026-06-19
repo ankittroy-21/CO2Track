@@ -1,7 +1,9 @@
 /**
- * Custom hook for Groq API integration with streaming support
+ * Custom hook for Groq API integration with streaming and persistent history support
  */
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 
 const API_URL = 'https://api.groq.com/openai/v1/chat/completions'
 const MODEL = 'llama-3.1-8b-instant'
@@ -18,15 +20,100 @@ const MODEL = 'llama-3.1-8b-instant'
  */
 
 export function useGroqInsights() {
+  const { user } = useAuth()
   const [insights, setInsights] = useState('')
+  const [insightsHistory, setInsightsHistory] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false)
   const [error, setError] = useState(null)
   const abortControllerRef = useRef(null)
 
-  /**
-   * Generate insights from Groq API using streaming
-   * @param {EmissionData} emissionData
-   */
+  // ── Fetch history ───────────────────────────────────────
+  const fetchInsightsHistory = useCallback(async () => {
+    if (!user) {
+      setInsightsHistory([])
+      return
+    }
+    setIsHistoryLoading(true)
+
+    try {
+      const { data, error } = await supabase
+        .from('ai_insights')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+
+      if (!error && data) {
+        setInsightsHistory(data)
+        // Cache in local storage
+        localStorage.setItem(`co2track_ai_insights_${user.id}`, JSON.stringify(data))
+      } else {
+        // Fallback to local storage
+        const localData = localStorage.getItem(`co2track_ai_insights_${user.id}`)
+        if (localData) {
+          setInsightsHistory(JSON.parse(localData))
+        }
+      }
+    } catch {
+      // Fallback on exception
+      const localData = localStorage.getItem(`co2track_ai_insights_${user.id}`)
+      if (localData) {
+        setInsightsHistory(JSON.parse(localData))
+      }
+    } finally {
+      setIsHistoryLoading(false)
+    }
+  }, [user])
+
+  useEffect(() => {
+    fetchInsightsHistory()
+  }, [fetchInsightsHistory])
+
+  // ── Save new insight ─────────────────────────────────────
+  const saveInsight = useCallback(async (content) => {
+    if (!user || !content.trim()) return null
+
+    const newInsightRow = {
+      user_id: user.id,
+      content: content.trim(),
+      created_at: new Date().toISOString()
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('ai_insights')
+        .insert(newInsightRow)
+        .select()
+        .single()
+
+      if (!error && data) {
+        setInsightsHistory(prev => [data, ...prev])
+        // Sync local storage
+        const currentLocal = localStorage.getItem(`co2track_ai_insights_${user.id}`)
+        const parsedLocal = currentLocal ? JSON.parse(currentLocal) : []
+        localStorage.setItem(`co2track_ai_insights_${user.id}`, JSON.stringify([data, ...parsedLocal]))
+        return data
+      } else {
+        // Fallback to local storage (generate mock id)
+        const mockRow = { ...newInsightRow, id: Math.random().toString(36).substr(2, 9) }
+        setInsightsHistory(prev => [mockRow, ...prev])
+        const currentLocal = localStorage.getItem(`co2track_ai_insights_${user.id}`)
+        const parsedLocal = currentLocal ? JSON.parse(currentLocal) : []
+        localStorage.setItem(`co2track_ai_insights_${user.id}`, JSON.stringify([mockRow, ...parsedLocal]))
+        return mockRow
+      }
+    } catch {
+      // Fallback to local storage
+      const mockRow = { ...newInsightRow, id: Math.random().toString(36).substr(2, 9) }
+      setInsightsHistory(prev => [mockRow, ...prev])
+      const currentLocal = localStorage.getItem(`co2track_ai_insights_${user.id}`)
+      const parsedLocal = currentLocal ? JSON.parse(currentLocal) : []
+      localStorage.setItem(`co2track_ai_insights_${user.id}`, JSON.stringify([mockRow, ...parsedLocal]))
+      return mockRow
+    }
+  }, [user])
+
+  // ── Generate insights from Groq API using streaming ─────
   const generateInsights = useCallback(async (emissionData) => {
     const apiKey = import.meta.env.VITE_GROQ_API_KEY
     if (!apiKey) {
@@ -112,21 +199,20 @@ Give specific, ranked, actionable advice based on THIS user's actual biggest emi
           }
         }
       }
+
+      // Stream successfully completed, save to history database
+      if (fullResponse.trim()) {
+        await saveInsight(fullResponse)
+      }
     } catch (err) {
       if (err.name === 'AbortError') return
       setError(err.message || 'Failed to generate insights. Please try again.')
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [user, saveInsight])
 
-  /**
-   * Chat with Groq using conversation history
-   * @param {string} userMessage
-   * @param {Array} history - Previous message history
-   * @param {EmissionData} emissionData
-   * @returns {Promise<string>} Bot response
-   */
+  // ── Chat with Groq using conversation history ───────────
   const chat = useCallback(async (userMessage, history, emissionData) => {
     const apiKey = import.meta.env.VITE_GROQ_API_KEY
     if (!apiKey) {
@@ -171,10 +257,13 @@ Give specific, ranked, actionable advice based on THIS user's actual biggest emi
 
   return {
     insights,
+    insightsHistory,
     isLoading,
+    isHistoryLoading,
     error,
     generateInsights,
     chat,
     retry,
+    refetchHistory: fetchInsightsHistory,
   }
 }

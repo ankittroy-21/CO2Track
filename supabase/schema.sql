@@ -122,6 +122,22 @@ create or replace trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
+-- 5. AI INSIGHTS HISTORY
+create table if not exists ai_insights (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid references profiles(id) on delete cascade not null,
+  content     text not null,
+  created_at  timestamptz default now()
+);
+
+alter table ai_insights enable row level security;
+
+create policy "Users can view own insights"
+  on ai_insights for select using (auth.uid() = user_id);
+
+create policy "Users can insert own insights"
+  on ai_insights for insert with check (auth.uid() = user_id);
+
 -- ============================================================
 -- INDEXES
 -- ============================================================
@@ -130,3 +146,6 @@ create index if not exists idx_emission_logs_user_date
 
 create index if not exists idx_challenge_state_user
   on challenge_state(user_id);
+
+create index if not exists idx_ai_insights_user
+  on ai_insights(user_id, created_at desc);

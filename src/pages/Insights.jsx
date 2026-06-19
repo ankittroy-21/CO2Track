@@ -37,9 +37,20 @@ function parseInsights(raw) {
     .filter(Boolean)
 }
 
+function formatDateTime(dateString) {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 export default function Insights() {
   const { totalMonthlyEmission, categoryBreakdown, userProfile } = useEmissions()
-  const { insights, isLoading, error, generateInsights, chat, retry } = useGroqInsights()
+  const { insights, insightsHistory, isLoading, error, generateInsights, chat, retry } = useGroqInsights()
   const { count, remaining, canUse, incrementUsage, loading: usageLoading } = useAIUsage()
   const [messageHistory, setMessageHistory] = useState([])
   const [chatInput, setChatInput] = useState('')
@@ -241,16 +252,37 @@ export default function Insights() {
               </div>
             )}
 
-            {/* Streamed insights */}
-            {insightsList.length > 0 ? (
-              <div
-                className="space-y-3"
-                aria-live="polite"
-                aria-label="AI insights"
-              >
-                {insightsList.map((insight, i) => (
-                  <InsightCard key={i} insight={insight} index={i} />
-                ))}
+            {/* Streaming Active Insight */}
+            {isLoading && insightsList.length > 0 && (
+              <div className="mb-6 pb-6 border-b border-gray-100">
+                <h3 className="text-xs font-semibold text-green-dark uppercase tracking-wider mb-3 animate-pulse">Generating New Recommendations...</h3>
+                <div className="space-y-3">
+                  {insightsList.map((insight, i) => (
+                    <InsightCard key={`streaming-${i}`} insight={insight} index={i} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* History of AI Insights */}
+            {insightsHistory.length > 0 ? (
+              <div className="space-y-6">
+                {insightsHistory.map((report, rIdx) => {
+                  const parsed = parseInsights(report.content)
+                  return (
+                    <div key={report.id || rIdx} className="space-y-3">
+                      <div className="flex items-center justify-between text-xs text-gray-400 border-b border-gray-100 pb-1.5">
+                        <span className="font-medium text-charcoal">Report generated</span>
+                        <span>{formatDateTime(report.created_at)}</span>
+                      </div>
+                      <div className="space-y-3">
+                        {parsed.map((insight, i) => (
+                          <InsightCard key={`${report.id || rIdx}-${i}`} insight={insight} index={i} />
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             ) : !isLoading && !error && (
               <div className="py-8 text-center text-sm text-gray-400">
