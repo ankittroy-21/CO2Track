@@ -3,6 +3,7 @@
  * Provides: user, session, profile, signInWithGitHub, signOut, loading
  */
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext(null)
@@ -80,6 +81,10 @@ export function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   )
+}
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 }
 
 /** @returns {ReturnType<typeof AuthProvider>['value']} */

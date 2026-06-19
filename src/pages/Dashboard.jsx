@@ -14,6 +14,7 @@ const CATEGORY_COLORS = {
   shopping: '#1a1a1a',
 }
 
+// No props — reads state via hooks/context
 export default function Dashboard() {
   const { totalMonthlyEmission, categoryBreakdown, userProfile, isLoading, logs } = useEmissions()
   const [countUp, setCountUp] = useState(0)

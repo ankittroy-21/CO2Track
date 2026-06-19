@@ -58,6 +58,7 @@ const WEEKLY_CHALLENGES = [
 
 const MAX_POINTS = 150
 
+// No props — reads state via hooks/context
 export default function Challenges() {
   const { user } = useAuth()
   const [completedChallenges, setCompletedChallenges] = useState([])

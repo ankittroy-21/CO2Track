@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import { useAuth } from '../contexts/AuthContext'
 import { Leaf } from 'lucide-react'
 
@@ -12,6 +13,11 @@ function GithubIcon({ className }) {
   )
 }
 
+GithubIcon.propTypes = {
+  className: PropTypes.string,
+}
+
+// No props — reads state via hooks/context
 export default function Login() {
   const { signInWithGitHub } = useAuth()
   const [loadingProvider, setLoadingProvider] = useState(null)

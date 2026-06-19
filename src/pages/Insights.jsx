@@ -49,6 +49,7 @@ function formatDateTime(dateString) {
   })
 }
 
+// No props — reads state via hooks/context
 export default function Insights() {
   const { totalMonthlyEmission, categoryBreakdown, userProfile } = useEmissions()
   const { insights, insightsHistory, isLoading, error, generateInsights, chat, retry } = useGroqInsights()

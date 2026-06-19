@@ -33,6 +33,7 @@ function getSubcategoryLabel2(category, sub) {
   }
 }
 
+// No props — reads state via hooks/context
 export default function LogActivity() {
   const { logs, addLog } = useEmissions()
   const [activeTab, setActiveTab] = useState('transport')

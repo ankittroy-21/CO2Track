@@ -44,6 +44,7 @@ const inputClass = (hasError) =>
     hasError ? 'border-red-400 bg-red-50' : 'border-gray-300 bg-white'
   }`
 
+// No props — reads state via hooks/context
 export default function Profile() {
   const { profile, updateProfile, loading } = useAuth()
   const [formData, setFormData] = useState({

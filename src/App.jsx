@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Layout from './components/Layout'
 import Login from './pages/Login'
@@ -37,6 +38,10 @@ function RequireAuth({ redirectIfNoOnboarding = true }) {
   }
 
   return <Outlet />
+}
+
+RequireAuth.propTypes = {
+  redirectIfNoOnboarding: PropTypes.bool,
 }
 
 /** Guard: redirect logged-in users away from /login */

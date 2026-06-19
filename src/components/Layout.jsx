@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import { Home, PlusCircle, Sparkles, Trophy, User, LogOut, Leaf } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -25,6 +26,10 @@ function Wordmark({ size = 'md' }) {
   )
 }
 
+Wordmark.propTypes = {
+  size: PropTypes.oneOf(['sm', 'md']),
+}
+
 /**
  * Logo icon (leaf in green square)
  * @param {Object} props
@@ -43,10 +48,11 @@ function LogoIcon({ size = 24 }) {
   )
 }
 
-/**
- * Main application layout with responsive sidebar/bottom nav
- * @returns {JSX.Element}
- */
+LogoIcon.propTypes = {
+  size: PropTypes.number,
+}
+
+// No props — reads state via hooks/context
 export default function Layout() {
   const { profile, signOut } = useAuth()
   const navigate = useNavigate()

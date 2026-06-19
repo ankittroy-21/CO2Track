@@ -17,6 +17,27 @@ const CATEGORY_LABELS = {
   shopping: 'Shopping',
 }
 
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload?.length) {
+    const d = payload[0].payload
+    return (
+      <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 shadow text-xs">
+        <div className="font-medium text-charcoal">{d.category || d.name}</div>
+        <div className="text-gray-600">{formatCO2(payload[0].value)} · {d.pct}%</div>
+      </div>
+    )
+  }
+  return null
+}
+
+CustomTooltip.propTypes = {
+  active: PropTypes.bool,
+  payload: PropTypes.arrayOf(PropTypes.shape({
+    payload: PropTypes.object,
+    value: PropTypes.number
+  }))
+}
+
 /**
  * Category Breakdown Component
  * Displays a visual breakdown of emissions by category (Transport, Food, Energy, Shopping)
@@ -48,27 +69,6 @@ export default function CategoryBreakdown({ breakdown }) {
     })),
     [breakdown]
   )
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload?.length) {
-      const d = payload[0].payload
-      return (
-        <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 shadow text-xs">
-          <div className="font-medium text-charcoal">{d.category || d.name}</div>
-          <div className="text-gray-600">{formatCO2(payload[0].value)} · {d.pct}%</div>
-        </div>
-      )
-    }
-    return null
-  }
-
-  CustomTooltip.propTypes = {
-    active: PropTypes.bool,
-    payload: PropTypes.arrayOf(PropTypes.shape({
-      payload: PropTypes.object,
-      value: PropTypes.number
-    }))
-  }
 
   if (pieData.length === 0) {
     return (
